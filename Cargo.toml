@@ -1,0 +1,33 @@
+[workspace]
+members = [
+    "crates/atomr-view-core",
+    "crates/atomr-view-backends",
+    "crates/atomr-view-python",
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Matt Bragaw <mattbragaw@example.com>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/rustakka/atomr-view"
+
+[workspace.dependencies]
+atomr-core = { git = "https://github.com/rustakka/atomr.git" }
+atomr-persistence = { git = "https://github.com/rustakka/atomr.git" }
+atomr-infer = { git = "https://github.com/rustakka/atomr.git" }
+tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+pyo3 = { version = "0.21", features = ["extension-module", "abi3-py310"] }
+winit = "0.29"
+wgpu = "0.19"
+log = "0.4"
+thiserror = "1.0"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+egui = "0.27"
+egui-wgpu = "0.27"
+egui-winit = "0.27"
+proptest = "1.4"

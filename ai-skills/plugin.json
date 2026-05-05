@@ -1,0 +1,19 @@
+{
+  "name": "atomr-view-ai-skills",
+  "version": "0.1.0",
+  "description": "AI skills for building actor-based UIs with atomr-view",
+  "skills": [
+    {
+      "name": "atomr-view-design",
+      "path": "skills/atomr-view-design/SKILL.md"
+    },
+    {
+      "name": "atomr-view-python",
+      "path": "skills/atomr-view-python/SKILL.md"
+    },
+    {
+      "name": "atomr-view-troubleshooting",
+      "path": "skills/atomr-view-troubleshooting/SKILL.md"
+    }
+  ]
+}

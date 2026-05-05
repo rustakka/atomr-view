@@ -1,0 +1,17 @@
+[package]
+name = "atomr-view-backends"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+atomr-view-core = { path = "../atomr-view-core" }
+async-trait.workspace = true
+winit.workspace = true
+wgpu.workspace = true
+egui.workspace = true
+egui-wgpu.workspace = true
+egui-winit.workspace = true
+tokio.workspace = true
+log.workspace = true

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "atomr-view",
+  "description": "Skills and plugins for building actor-based UIs with atomr-view, part of the atomr ecosystem.",
+  "owner": {
+    "name": "rustakka",
+    "url": "https://github.com/rustakka"
+  },
+  "plugins": [
+    {
+      "name": "atomr-view-ai-skills",
+      "description": "Skills for AI coding assistants working on projects that depend on atomr-view — UI actor design, Python bindings, and troubleshooting.",
+      "author": {
+        "name": "rustakka"
+      },
+      "category": "development",
+      "source": "./ai-skills",
+      "homepage": "https://github.com/rustakka/atomr-view/tree/main/ai-skills"
+    }
+  ]
+}

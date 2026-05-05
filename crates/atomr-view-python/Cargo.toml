@@ -1,0 +1,17 @@
+[package]
+name = "atomr-view-python"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+name = "atomr_view"
+crate-type = ["cdylib"]
+
+[dependencies]
+atomr-view-core = { path = "../atomr-view-core" }
+atomr-view-backends = { path = "../atomr-view-backends" }
+pyo3.workspace = true
+tokio.workspace = true
+log.workspace = true

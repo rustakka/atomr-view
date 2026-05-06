@@ -8,7 +8,7 @@ members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.3.2"
+version = "0.3.3"
 edition = "2021"
 authors = ["Matt Bragaw <mattbragaw@example.com>"]
 license = "Apache-2.0"
@@ -19,8 +19,8 @@ repository = "https://github.com/rustakka/atomr-view"
 # publish; `cargo xtask bump` keeps these in lockstep with
 # [workspace.package].version so the published artifact resolves
 # its siblings from crates.io.
-atomr-view-core = { path = "crates/atomr-view-core", version = "0.3.2" }
-atomr-view-backends = { path = "crates/atomr-view-backends", version = "0.3.2" }
+atomr-view-core = { path = "crates/atomr-view-core", version = "0.3.3" }
+atomr-view-backends = { path = "crates/atomr-view-backends", version = "0.3.3" }
 
 # External git-deps. `version` is required alongside `git` so
 # `cargo publish` can record a crates.io-resolvable requirement for

@@ -34,6 +34,21 @@ subgraph of the local `ActorSystem`.
 - **Python-First API**: Full integration via PyO3, allowing UI actors and
   complex scene manipulation to be authored in Python.
 
+## Platform Backends
+
+`atomr-view` supports multiple rendering surfaces via the `UiBackend` strategy:
+
+- **Desktop (`winit` + `wgpu` + `egui`)**: The default reference implementation
+  for high-performance desktop apps.
+- **Bevy (`BevyBackend`)**: Integrates the actor system with Bevy's ECS. Use the
+  `ActorBacked` component to mirror ECS entities with long-lived actors for
+  persistence and netcode.
+- **Wasm (`WebDomBackend`)**: Targets browser environments with a cooperative
+  single-threaded scheduler that yields to `requestAnimationFrame`.
+- **Mobile (`NativeShellBackend`)**: Bridges to SwiftUI (iOS) and Jetpack
+  Compose (Android) via `uniffi`, maintaining native UI performance while
+  keeping business logic in Rust actors.
+
 ## Quick Start
 
 ### Rust

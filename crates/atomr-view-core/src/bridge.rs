@@ -1,10 +1,10 @@
-use crate::scene::{SceneDescription, ScenePatch, SceneKey};
-use tokio::sync::mpsc;
+use crate::scene::{SceneDescription, SceneKey, ScenePatch};
 use atomr_core::prelude::*;
-use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
-use uuid::Uuid;
 use pyo3::prelude::*;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use tokio::sync::mpsc;
+use uuid::Uuid;
 
 #[pyclass]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, uniffi::Record)]
@@ -64,12 +64,7 @@ pub struct UiBridgeActor {
 
 impl UiBridgeActor {
     pub fn new(cmd_tx: mpsc::Sender<BackendCommand>, evt_rx: mpsc::Receiver<BackendEvent>) -> Self {
-        Self {
-            cmd_tx,
-            evt_rx: Some(evt_rx),
-            window_routes: HashMap::new(),
-            pending_scenes: HashMap::new(),
-        }
+        Self { cmd_tx, evt_rx: Some(evt_rx), window_routes: HashMap::new(), pending_scenes: HashMap::new() }
     }
 
     async fn flush_pending_scenes(&mut self) {
@@ -93,7 +88,7 @@ impl Actor for UiBridgeActor {
                     BackendCommand::SetScene { window_id, scene } => {
                         // Conflate: only keep the latest scene for this window
                         self.pending_scenes.insert(window_id, scene);
-                        // In a real impl, we might use a timer to flush, 
+                        // In a real impl, we might use a timer to flush,
                         // or flush on next frame tick.
                         self.flush_pending_scenes().await;
                     }

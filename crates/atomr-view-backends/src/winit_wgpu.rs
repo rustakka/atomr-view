@@ -1,14 +1,14 @@
 use crate::UiBackend;
-use atomr_view_core::bridge::{UiBridge, BackendCommand, BackendEvent, InputEvent};
-use atomr_view_core::scene::{SceneDescription, ScenePatch, NodeKind, PropertyValue};
-use winit::{
-    event::{Event, WindowEvent, ElementState},
-    event_loop::{ControlFlow, EventLoop},
-    window::{WindowBuilder, Window, WindowId},
-};
-use std::collections::HashMap;
-use egui_winit::State;
+use atomr_view_core::bridge::{BackendCommand, BackendEvent, InputEvent, UiBridge};
+use atomr_view_core::scene::{NodeKind, PropertyValue, SceneDescription, ScenePatch};
 use egui_wgpu::Renderer;
+use egui_winit::State;
+use std::collections::HashMap;
+use winit::{
+    event::{ElementState, Event, WindowEvent},
+    event_loop::{ControlFlow, EventLoop},
+    window::{Window, WindowBuilder, WindowId},
+};
 
 pub struct WinitWgpuBackend;
 
@@ -26,82 +26,82 @@ impl UiBackend for WinitWgpuBackend {
         let event_loop = EventLoop::new().unwrap();
         let mut windows: HashMap<WindowId, WindowState> = HashMap::new();
         let mut id_to_window: HashMap<String, WindowId> = HashMap::new();
-        
-        event_loop.run(move |event, elwt| {
-            elwt.set_control_flow(ControlFlow::Poll);
 
-            // Poll bridge for commands
-            while let Ok(cmd) = bridge.cmd_rx.try_recv() {
-                match cmd {
-                    BackendCommand::CreateWindow { id, title } => {
-                        let window = WindowBuilder::new()
-                            .with_title(&title)
-                            .build(elwt)
-                            .unwrap();
-                        let window_id = window.id();
-                        
-                        // In a real impl, we'd initialize wgpu here
-                        // For now, placeholders for egui_state and egui_renderer
-                        // let egui_state = State::new(...);
-                        // let egui_renderer = Renderer::new(...);
+        event_loop
+            .run(move |event, elwt| {
+                elwt.set_control_flow(ControlFlow::Poll);
 
-                        id_to_window.insert(id.clone(), window_id);
-                        // windows.insert(window_id, WindowState { ... });
-                    }
-                    BackendCommand::DestroyWindow { id } => {
-                        if let Some(window_id) = id_to_window.remove(&id) {
-                            windows.remove(&window_id);
+                // Poll bridge for commands
+                while let Ok(cmd) = bridge.cmd_rx.try_recv() {
+                    match cmd {
+                        BackendCommand::CreateWindow { id, title } => {
+                            let window = WindowBuilder::new().with_title(&title).build(elwt).unwrap();
+                            let window_id = window.id();
+
+                            // In a real impl, we'd initialize wgpu here
+                            // For now, placeholders for egui_state and egui_renderer
+                            // let egui_state = State::new(...);
+                            // let egui_renderer = Renderer::new(...);
+
+                            id_to_window.insert(id.clone(), window_id);
+                            // windows.insert(window_id, WindowState { ... });
                         }
-                    }
-                    BackendCommand::SetScene { window_id, scene } => {
-                        if let Some(wid) = id_to_window.get(&window_id) {
-                            if let Some(ws) = windows.get_mut(wid) {
-                                ws.scene = Some(scene);
-                            }
-                        }
-                    }
-                    BackendCommand::ApplyPatches { window_id, patches: _ } => {
-                        // Apply patches to ws.scene
-                    }
-                    BackendCommand::RequestRedraw { window_id } => {
-                        if let Some(wid) = id_to_window.get(&window_id) {
-                            if let Some(ws) = windows.get(wid) {
-                                ws.window.request_redraw();
-                            }
-                        }
-                    }
-                    BackendCommand::OpenFilePicker { correlation_id: _, title: _ } => {
-                        // Implement file picker
-                    }
-
-                }
-            }
-
-            match event {
-                Event::WindowEvent { window_id, event, .. } => {
-                    if let Some(ws) = windows.get_mut(&window_id) {
-                        // let _ = ws.egui_state.on_window_event(&ws.window, &event);
-                        
-                        match event {
-                            WindowEvent::CloseRequested => {
-                                let _ = bridge.evt_tx.try_send(BackendEvent::WindowClosed { id: ws.id.clone() });
-                                let id = ws.id.clone();
+                        BackendCommand::DestroyWindow { id } => {
+                            if let Some(window_id) = id_to_window.remove(&id) {
                                 windows.remove(&window_id);
-                                id_to_window.remove(&id);
-                                if windows.is_empty() {
-                                    elwt.exit();
+                            }
+                        }
+                        BackendCommand::SetScene { window_id, scene } => {
+                            if let Some(wid) = id_to_window.get(&window_id) {
+                                if let Some(ws) = windows.get_mut(wid) {
+                                    ws.scene = Some(scene);
                                 }
                             }
-                            WindowEvent::RedrawRequested => {
-                                // Draw egui using ws.scene
+                        }
+                        BackendCommand::ApplyPatches { window_id, patches: _ } => {
+                            // Apply patches to ws.scene
+                        }
+                        BackendCommand::RequestRedraw { window_id } => {
+                            if let Some(wid) = id_to_window.get(&window_id) {
+                                if let Some(ws) = windows.get(wid) {
+                                    ws.window.request_redraw();
+                                }
                             }
-                            _ => {}
+                        }
+                        BackendCommand::OpenFilePicker { correlation_id: _, title: _ } => {
+                            // Implement file picker
                         }
                     }
                 }
-                _ => {}
-            }
-        }).unwrap();
+
+                match event {
+                    Event::WindowEvent { window_id, event, .. } => {
+                        if let Some(ws) = windows.get_mut(&window_id) {
+                            // let _ = ws.egui_state.on_window_event(&ws.window, &event);
+
+                            match event {
+                                WindowEvent::CloseRequested => {
+                                    let _ = bridge
+                                        .evt_tx
+                                        .try_send(BackendEvent::WindowClosed { id: ws.id.clone() });
+                                    let id = ws.id.clone();
+                                    windows.remove(&window_id);
+                                    id_to_window.remove(&id);
+                                    if windows.is_empty() {
+                                        elwt.exit();
+                                    }
+                                }
+                                WindowEvent::RedrawRequested => {
+                                    // Draw egui using ws.scene
+                                }
+                                _ => {}
+                            }
+                        }
+                    }
+                    _ => {}
+                }
+            })
+            .unwrap();
     }
 }
 

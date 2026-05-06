@@ -1,6 +1,6 @@
+use async_trait::async_trait;
 use atomr_view_core::bridge::UiBridge;
 use atomr_view_core::scene::{SceneDescription, ScenePatch};
-use async_trait::async_trait;
 
 uniffi::setup_scaffolding!();
 
@@ -15,7 +15,7 @@ pub trait Reconciler: 'static {
     fn apply_patches(&mut self, tree: &mut Self::NativeTree, patches: &[ScenePatch]);
 }
 
-pub mod winit_wgpu;
-pub mod wasm;
-pub mod native_shell;
 pub mod bevy;
+pub mod native_shell;
+pub mod wasm;
+pub mod winit_wgpu;

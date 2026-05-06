@@ -1,6 +1,6 @@
-use atomr_core::prelude::*;
+use crate::bridge::{BackendCommand, BackendEvent, UiBridgeMessage};
 use crate::scene::{SceneDescription, ScenePatch};
-use crate::bridge::{BackendCommand, UiBridgeMessage, BackendEvent};
+use atomr_core::prelude::*;
 
 pub struct WindowActor {
     pub id: String,

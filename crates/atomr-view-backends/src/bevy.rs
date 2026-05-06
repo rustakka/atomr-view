@@ -1,8 +1,8 @@
 use crate::UiBackend;
-use atomr_view_core::bridge::{UiBridge, BackendCommand, BackendEvent, InputEvent};
-use atomr_view_core::scene::{SceneDescription, ScenePatch, NodeKind, PropertyValue};
-use bevy::prelude::*;
+use atomr_view_core::bridge::{BackendCommand, BackendEvent, InputEvent, UiBridge};
+use atomr_view_core::scene::{NodeKind, PropertyValue, SceneDescription, ScenePatch};
 use bevy::app::AppExit;
+use bevy::prelude::*;
 
 pub struct BevyBackend;
 
@@ -16,11 +16,11 @@ impl UiBackend for BevyBackend {
     fn run(self, bridge: UiBridge) {
         let mut app = App::new();
         app.add_plugins(DefaultPlugins)
-           .insert_resource(UiBridgeReceiver(bridge.cmd_rx))
-           .insert_resource(UiBridgeSender(bridge.evt_tx))
-           .add_systems(PreUpdate, drain_actor_commands)
-           .add_systems(PostUpdate, forward_backend_events)
-           .run();
+            .insert_resource(UiBridgeReceiver(bridge.cmd_rx))
+            .insert_resource(UiBridgeSender(bridge.evt_tx))
+            .add_systems(PreUpdate, drain_actor_commands)
+            .add_systems(PostUpdate, forward_backend_events)
+            .run();
     }
 }
 

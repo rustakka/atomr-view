@@ -1,0 +1,50 @@
+[build-system]
+requires = ["maturin>=1.5,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "atomr-view"
+version = "0.1.0"
+description = "Backend-agnostic UI/visualisation system for atomr — actor-driven scenes across native, web, and mobile."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "atomr-view contributors" }]
+keywords = ["ui", "actor", "atomr", "visualisation", "wgpu", "bevy"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Rust",
+  "License :: OSI Approved :: Apache Software License",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Multimedia :: Graphics",
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+]
+
+[project.urls]
+Homepage = "https://github.com/rustakka/atomr-view"
+Repository = "https://github.com/rustakka/atomr-view"
+Issues = "https://github.com/rustakka/atomr-view/issues"
+Changelog = "https://github.com/rustakka/atomr-view/releases"
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "pytest-asyncio>=0.23"]
+
+[tool.maturin]
+manifest-path = "crates/atomr-view-python/Cargo.toml"
+module-name = "atomr_view"
+features = ["pyo3/extension-module"]
+strip = true
+# Maturin auto-emits `License-File: LICENSE` in the package metadata
+# whenever a LICENSE exists next to pyproject.toml. PyPI strictly
+# validates that any declared License-File is physically present in
+# the distribution, so the workspace-root LICENSE must be packed into
+# the sdist + wheel.
+include = ["LICENSE"]

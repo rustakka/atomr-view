@@ -1,8 +1,8 @@
-use pyo3::prelude::*;
-use atomr_view_core::bridge::{UiBridge, BackendCommand, BackendEvent, CorrelationId};
-use atomr_view_core::scene::{SceneDescription, SceneNode, SceneKey, NodeKind, PropertyMap, PropertyValue};
 use atomr_view_backends::winit_wgpu::WinitWgpuBackend;
 use atomr_view_backends::UiBackend;
+use atomr_view_core::bridge::{BackendCommand, BackendEvent, CorrelationId, UiBridge};
+use atomr_view_core::scene::{NodeKind, PropertyMap, PropertyValue, SceneDescription, SceneKey, SceneNode};
+use pyo3::prelude::*;
 use tokio::sync::mpsc;
 
 #[pyclass]
@@ -17,9 +17,9 @@ impl PyUiSystem {
     fn new() -> Self {
         let (cmd_tx, cmd_rx) = mpsc::channel(100);
         let (evt_tx, evt_rx) = mpsc::channel(100);
-        
+
         let bridge = UiBridge { cmd_rx, evt_tx };
-        
+
         std::thread::spawn(move || {
             let backend = WinitWgpuBackend;
             backend.run(bridge);

@@ -1,5 +1,5 @@
 use crate::UiBackend;
-use atomr_view_core::bridge::{UiBridge, BackendCommand, BackendEvent};
+use atomr_view_core::bridge::{BackendCommand, BackendEvent, UiBridge};
 use std::sync::Arc;
 
 pub struct NativeShellBackend {
@@ -20,7 +20,7 @@ impl UiBackend for NativeShellBackend {
                 callback.on_command(cmd);
             }
         });
-        
+
         // Native shell owns the actual main loop elsewhere
     }
 }

@@ -1,5 +1,5 @@
 use crate::UiBackend;
-use atomr_view_core::bridge::{UiBridge, BackendCommand, BackendEvent};
+use atomr_view_core::bridge::{BackendCommand, BackendEvent, UiBridge};
 use wasm_bindgen::prelude::*;
 use web_sys::{window, Document, Element};
 
@@ -35,7 +35,8 @@ impl UiBackend for WebDomBackend {
 }
 
 fn request_animation_frame(f: &Closure<dyn FnMut()>) {
-    window().unwrap()
+    window()
+        .unwrap()
         .request_animation_frame(f.as_ref().unchecked_ref())
         .expect("should register `requestAnimationFrame` OK");
 }

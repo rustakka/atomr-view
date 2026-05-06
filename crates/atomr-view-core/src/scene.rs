@@ -1,7 +1,7 @@
-use serde::{Serialize, Deserialize};
-use uuid::Uuid;
-use std::collections::HashMap;
 use pyo3::prelude::*;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+use uuid::Uuid;
 
 #[pyclass]
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, uniffi::Record)]
@@ -191,7 +191,11 @@ fn diff_nodes(old: &SceneNode, new: &SceneNode, patches: &mut Vec<ScenePatch>) {
     // Diff properties
     for (key, val) in &new.properties.properties {
         if old.properties.properties.get(key) != Some(val) {
-            patches.push(ScenePatch::UpdateProp { key: old.key.clone(), prop: key.clone(), value: val.clone() });
+            patches.push(ScenePatch::UpdateProp {
+                key: old.key.clone(),
+                prop: key.clone(),
+                value: val.clone(),
+            });
         }
     }
 
@@ -205,10 +209,10 @@ fn diff_nodes(old: &SceneNode, new: &SceneNode, patches: &mut Vec<ScenePatch>) {
 
     if new_len > old_len {
         for i in old_len..new_len {
-            patches.push(ScenePatch::Insert { 
-                parent_key: old.key.clone(), 
-                index: i as u32, 
-                node: new.children[i].clone() 
+            patches.push(ScenePatch::Insert {
+                parent_key: old.key.clone(),
+                index: i as u32,
+                node: new.children[i].clone(),
             });
         }
     } else if old_len > new_len {
@@ -253,7 +257,7 @@ mod tests {
         let kind = arb_node_kind();
         let properties = prop::collection::hash_map(any::<String>(), arb_property_value(), 0..5)
             .prop_map(|m| PropertyMap(m));
-        
+
         (key, kind, properties).prop_flat_map(move |(key, kind, props)| {
             let children = if depth > 0 {
                 prop::collection::vec(arb_scene_node(depth - 1), 0..3).boxed()

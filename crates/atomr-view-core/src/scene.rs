@@ -21,6 +21,12 @@ impl SceneKey {
     }
 }
 
+impl Default for SceneKey {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[pyclass]
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, uniffi::Record)]
 pub struct SceneDescription {
@@ -256,7 +262,7 @@ mod tests {
         let key = arb_scene_key();
         let kind = arb_node_kind();
         let properties = prop::collection::hash_map(any::<String>(), arb_property_value(), 0..5)
-            .prop_map(|m| PropertyMap(m));
+            .prop_map(|m| PropertyMap { properties: m });
 
         (key, kind, properties).prop_flat_map(move |(key, kind, props)| {
             let children = if depth > 0 {
@@ -265,7 +271,7 @@ mod tests {
                 Just(vec![]).boxed()
             };
             children.prop_map(move |children| SceneNode {
-                key,
+                key: key.clone(),
                 kind: kind.clone(),
                 properties: props.clone(),
                 children,

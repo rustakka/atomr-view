@@ -24,6 +24,12 @@ impl CorrelationId {
     }
 }
 
+impl Default for CorrelationId {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, uniffi::Enum)]
 pub enum BackendCommand {
     CreateWindow { id: String, title: String },
@@ -110,15 +116,15 @@ impl Actor for UiBridgeActor {
             UiBridgeMessage::InternalEvent(evt) => {
                 match evt {
                     BackendEvent::WindowClosed { id } => {
-                        if let Some(route) = self.window_routes.get(&id) {
+                        if let Some(_route) = self.window_routes.get(&id) {
                             // Forward to window actor
                             // route.tell(...)
                         }
                         self.window_routes.remove(&id);
                         self.pending_scenes.remove(&id);
                     }
-                    BackendEvent::Input { window_id, event } => {
-                        if let Some(route) = self.window_routes.get(&window_id) {
+                    BackendEvent::Input { window_id, event: _ } => {
+                        if let Some(_route) = self.window_routes.get(&window_id) {
                             // route.tell(...)
                         }
                     }

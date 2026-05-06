@@ -8,6 +8,7 @@ use tokio::sync::mpsc;
 #[pyclass]
 struct PyUiSystem {
     cmd_tx: mpsc::Sender<BackendCommand>,
+    #[allow(dead_code)] // wired up in a follow-up; kept on the struct so the channel survives
     evt_rx: Option<mpsc::Receiver<BackendEvent>>,
 }
 

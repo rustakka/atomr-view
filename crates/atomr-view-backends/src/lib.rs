@@ -1,3 +1,8 @@
+// Backends are alpha-stage: most contain intentionally-stubbed
+// command/event paths and typed scaffolding that isn't read yet.
+// Re-tighten these lints once a backend graduates from stub state.
+#![allow(unused, dead_code, clippy::single_match, clippy::arc_with_non_send_sync)]
+
 use async_trait::async_trait;
 use atomr_view_core::bridge::UiBridge;
 use atomr_view_core::scene::{SceneDescription, ScenePatch};

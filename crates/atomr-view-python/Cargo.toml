@@ -10,8 +10,8 @@ name = "atomr_view"
 crate-type = ["cdylib"]
 
 [dependencies]
-atomr-view-core = { path = "../atomr-view-core" }
-atomr-view-backends = { path = "../atomr-view-backends" }
+atomr-view-core = { workspace = true }
+atomr-view-backends = { workspace = true }
 pyo3.workspace = true
 tokio.workspace = true
 log.workspace = true

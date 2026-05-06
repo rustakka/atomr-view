@@ -15,8 +15,20 @@ license = "Apache-2.0"
 repository = "https://github.com/rustakka/atomr-view"
 
 [workspace.dependencies]
-atomr-core = { git = "https://github.com/rustakka/atomr.git" }
-atomr-persistence = { git = "https://github.com/rustakka/atomr.git" }
+# Internal path-deps. The `version` pin is what crates.io records on
+# publish; `cargo xtask bump` keeps these in lockstep with
+# [workspace.package].version so the published artifact resolves
+# its siblings from crates.io.
+atomr-view-core = { path = "crates/atomr-view-core", version = "0.3.1" }
+atomr-view-backends = { path = "crates/atomr-view-backends", version = "0.3.1" }
+
+# External git-deps. `version` is required alongside `git` so
+# `cargo publish` can record a crates.io-resolvable requirement for
+# the published artifact while local builds keep using the git pin.
+# atomr-infer isn't published yet so it has no version pin; only
+# atomr-core is actively consumed today.
+atomr-core = { git = "https://github.com/rustakka/atomr.git", version = "0.3" }
+atomr-persistence = { git = "https://github.com/rustakka/atomr.git", version = "0.3" }
 atomr-infer = { git = "https://github.com/rustakka/atomr.git" }
 anyhow = "1.0"
 tokio = { version = "1", features = ["full"] }

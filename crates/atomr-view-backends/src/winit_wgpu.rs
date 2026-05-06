@@ -116,12 +116,12 @@ fn render_scene(ui: &mut egui::Ui, node: &atomr_view_core::scene::SceneNode) {
             });
         }
         NodeKind::Text {} => {
-            if let Some(PropertyValue::String { value }) = node.properties.0.get("text") {
+            if let Some(PropertyValue::String { value }) = node.properties.properties.get("text") {
                 ui.label(value);
             }
         }
         NodeKind::Button {} => {
-            if let Some(PropertyValue::String { value }) = node.properties.0.get("text") {
+            if let Some(PropertyValue::String { value }) = node.properties.properties.get("text") {
                 if ui.button(value).clicked() {
                     // Send click event back to bridge
                 }

@@ -7,22 +7,24 @@ use uuid::Uuid;
 use pyo3::prelude::*;
 
 #[pyclass]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub struct CorrelationId(Uuid);
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash, uniffi::Record)]
+pub struct CorrelationId {
+    pub id: String,
+}
 
 #[pymethods]
 impl CorrelationId {
     #[new]
     pub fn new() -> Self {
-        Self(Uuid::new_v4())
+        Self { id: Uuid::new_v4().to_string() }
     }
 
     pub fn __repr__(&self) -> String {
-        self.0.to_string()
+        self.id.clone()
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, uniffi::Enum)]
 pub enum BackendCommand {
     CreateWindow { id: String, title: String },
     DestroyWindow { id: String },
@@ -32,7 +34,7 @@ pub enum BackendCommand {
     OpenFilePicker { correlation_id: CorrelationId, title: String },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, uniffi::Enum)]
 pub enum BackendEvent {
     WindowCreated { id: String },
     WindowClosed { id: String },
@@ -41,7 +43,7 @@ pub enum BackendEvent {
     FilePickerResult { correlation_id: CorrelationId, path: Option<String> },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, uniffi::Enum)]
 pub enum InputEvent {
     Click { key: SceneKey, x: f32, y: f32 },
     KeyDown { key_code: String },

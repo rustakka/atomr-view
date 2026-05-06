@@ -4,3 +4,5 @@ pub mod actors;
 
 pub use scene::{SceneDescription, SceneNode, ScenePatch, SceneKey};
 pub use bridge::{BackendCommand, BackendEvent, UiBridge, UiBridgeActor};
+
+uniffi::setup_scaffolding!();

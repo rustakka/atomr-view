@@ -99,8 +99,9 @@ ui.set_scene("main", view.SceneDescription(root))
 - [x] **Desktop Backend**: `winit` + `wgpu` + `egui` reference implementation.
 - [x] **Python Bindings**: PyO3-based bridge with full scene manipulation support.
 - [x] **Testing**: Property-based tests for diffing invariants and async integration tests.
-- [ ] **Wasm Support**: `WebDomBackend` and single-threaded cooperative executor.
-- [ ] **Mobile Flow**: `NativeShellBackend` with `uniffi` bindings for SwiftUI/Compose.
+- [x] **Bevy Integration**: `BevyBackend` bridging actors with ECS entities.
+- [x] **Wasm Support**: `WebDomBackend` with cooperative cooperative scheduler hooks.
+- [x] **Mobile Flow**: `NativeShellBackend` with `uniffi` bindings for native shells.
 
 ## Project Structure
 

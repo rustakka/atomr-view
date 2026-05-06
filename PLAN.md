@@ -65,3 +65,17 @@ The project will be organized as a Cargo workspace:
 - Persistence integration (SQLite).
 - Support for multiple windows.
 - Conflation/Deduplication strategies in the bridge.
+
+### Phase 5: Bevy Backend Integration (Completed)
+- **BevyBackend**: Implemented a backend that integrates with Bevy's main loop.
+- **Bridge Systems**: Developed `PreUpdate` and `PostUpdate` systems for command draining and event forwarding.
+- **EntityActor Mirror**: Implemented the `ActorBacked` component pattern for ECS-Actor synchronization.
+
+### Phase 6: Wasm / WebDom Backend (Completed)
+- **WebDomBackend**: Implemented a Wasm-specific backend that yield to `requestAnimationFrame`.
+- **Cooperative Hooks**: Established hooks for a cooperative single-threaded actor executor.
+
+### Phase 7: Mobile (NativeShell & uniffi) (Completed)
+- **NativeShellBackend**: Developed an FFI-boundary backend using `uniffi`.
+- **FFI Stability**: Refactored core types (`SceneKey`, `PropertyValue`, `BackendCommand`) to be FFI-safe (using `Vec<u8>`, `String`, and `u32`).
+- **uniffi Integration**: Added `setup_scaffolding!` and derives for cross-language binding generation.

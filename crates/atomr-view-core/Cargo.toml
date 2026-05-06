@@ -15,6 +15,7 @@ pyo3.workspace = true
 log.workspace = true
 thiserror.workspace = true
 uuid.workspace = true
+uniffi.workspace = true
 
 [dev-dependencies]
 proptest.workspace = true

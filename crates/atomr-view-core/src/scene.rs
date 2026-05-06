@@ -4,23 +4,25 @@ use std::collections::HashMap;
 use pyo3::prelude::*;
 
 #[pyclass]
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct SceneKey(Uuid);
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize, uniffi::Record)]
+pub struct SceneKey {
+    pub id: Vec<u8>,
+}
 
 #[pymethods]
 impl SceneKey {
     #[new]
     pub fn new() -> Self {
-        Self(Uuid::new_v4())
+        Self { id: Uuid::new_v4().as_bytes().to_vec() }
     }
 
     pub fn __repr__(&self) -> String {
-        self.0.to_string()
+        Uuid::from_slice(&self.id).unwrap().to_string()
     }
 }
 
 #[pyclass]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, uniffi::Record)]
 pub struct SceneDescription {
     #[pyo3(get, set)]
     pub root: SceneNode,
@@ -35,7 +37,7 @@ impl SceneDescription {
 }
 
 #[pyclass]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, uniffi::Record)]
 pub struct SceneNode {
     #[pyo3(get, set)]
     pub key: SceneKey,
@@ -56,7 +58,7 @@ impl SceneNode {
 }
 
 #[pyclass]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, uniffi::Enum)]
 pub enum NodeKind {
     Container {},
     Text {},
@@ -67,38 +69,40 @@ pub enum NodeKind {
 }
 
 #[pyclass]
-#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq)]
-pub struct PropertyMap(pub HashMap<String, PropertyValue>);
+#[derive(Debug, Clone, Serialize, Deserialize, Default, PartialEq, uniffi::Record)]
+pub struct PropertyMap {
+    pub properties: HashMap<String, PropertyValue>,
+}
 
 #[pymethods]
 impl PropertyMap {
     #[new]
     pub fn new() -> Self {
-        Self(HashMap::new())
+        Self { properties: HashMap::new() }
     }
 
     pub fn set(&mut self, key: String, value: PropertyValue) {
-        self.0.insert(key, value);
+        self.properties.insert(key, value);
     }
 
     pub fn get(&self, key: String) -> Option<PropertyValue> {
-        self.0.get(&key).cloned()
+        self.properties.get(&key).cloned()
     }
 }
 
 #[pyclass]
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, uniffi::Enum)]
 pub enum PropertyValue {
     String { value: String },
     Number { value: f64 },
     Boolean { value: bool },
-    Color { values: [f32; 4] },
-    Vec2 { values: [f32; 2] },
+    Color { values: Vec<f32> },
+    Vec2 { values: Vec<f32> },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, uniffi::Enum)]
 pub enum ScenePatch {
-    Insert { parent_key: SceneKey, index: usize, node: SceneNode },
+    Insert { parent_key: SceneKey, index: u32, node: SceneNode },
     Remove { key: SceneKey },
     UpdateProp { key: SceneKey, prop: String, value: PropertyValue },
     Replace { key: SceneKey, with: SceneNode },
@@ -115,16 +119,16 @@ impl SceneDescription {
         for patch in patches {
             match patch {
                 ScenePatch::Insert { parent_key, index, node } => {
-                    if let Some(parent) = find_node_mut(&mut self.root, *parent_key) {
-                        parent.children.insert(*index, node.clone());
+                    if let Some(parent) = find_node_mut(&mut self.root, parent_key.clone()) {
+                        parent.children.insert(*index as usize, node.clone());
                     }
                 }
                 ScenePatch::Remove { key } => {
-                    remove_node(&mut self.root, *key);
+                    remove_node(&mut self.root, key.clone());
                 }
                 ScenePatch::UpdateProp { key, prop, value } => {
-                    if let Some(node) = find_node_mut(&mut self.root, *key) {
-                        node.properties.0.insert(prop.clone(), value.clone());
+                    if let Some(node) = find_node_mut(&mut self.root, key.clone()) {
+                        node.properties.properties.insert(prop.clone(), value.clone());
                     }
                 }
                 ScenePatch::Replace { key, with } => {
@@ -132,7 +136,7 @@ impl SceneDescription {
                         self.root = with.clone();
                     } else {
                         // Use a non-recursive approach or a safer recursive one for finding parent
-                        replace_node(&mut self.root, *key, with.clone());
+                        replace_node(&mut self.root, key.clone(), with.clone());
                     }
                 }
             }
@@ -145,7 +149,7 @@ fn find_node_mut(node: &mut SceneNode, key: SceneKey) -> Option<&mut SceneNode> 
         return Some(node);
     }
     for child in &mut node.children {
-        if let Some(found) = find_node_mut(child, key) {
+        if let Some(found) = find_node_mut(child, key.clone()) {
             return Some(found);
         }
     }
@@ -158,7 +162,7 @@ fn replace_node(node: &mut SceneNode, key: SceneKey, with: SceneNode) -> bool {
             node.children[i] = with;
             return true;
         }
-        if replace_node(&mut node.children[i], key, with.clone()) {
+        if replace_node(&mut node.children[i], key.clone(), with.clone()) {
             return true;
         }
     }
@@ -171,7 +175,7 @@ fn remove_node(node: &mut SceneNode, key: SceneKey) -> bool {
         return true;
     }
     for child in &mut node.children {
-        if remove_node(child, key) {
+        if remove_node(child, key.clone()) {
             return true;
         }
     }
@@ -180,14 +184,14 @@ fn remove_node(node: &mut SceneNode, key: SceneKey) -> bool {
 
 fn diff_nodes(old: &SceneNode, new: &SceneNode, patches: &mut Vec<ScenePatch>) {
     if old.key != new.key || old.kind != new.kind {
-        patches.push(ScenePatch::Replace { key: old.key, with: new.clone() });
+        patches.push(ScenePatch::Replace { key: old.key.clone(), with: new.clone() });
         return;
     }
 
     // Diff properties
-    for (key, val) in &new.properties.0 {
-        if old.properties.0.get(key) != Some(val) {
-            patches.push(ScenePatch::UpdateProp { key: old.key, prop: key.clone(), value: val.clone() });
+    for (key, val) in &new.properties.properties {
+        if old.properties.properties.get(key) != Some(val) {
+            patches.push(ScenePatch::UpdateProp { key: old.key.clone(), prop: key.clone(), value: val.clone() });
         }
     }
 
@@ -202,14 +206,14 @@ fn diff_nodes(old: &SceneNode, new: &SceneNode, patches: &mut Vec<ScenePatch>) {
     if new_len > old_len {
         for i in old_len..new_len {
             patches.push(ScenePatch::Insert { 
-                parent_key: old.key, 
-                index: i, 
+                parent_key: old.key.clone(), 
+                index: i as u32, 
                 node: new.children[i].clone() 
             });
         }
     } else if old_len > new_len {
         for i in (new_len..old_len).rev() {
-            patches.push(ScenePatch::Remove { key: old.children[i].key });
+            patches.push(ScenePatch::Remove { key: old.children[i].key.clone() });
         }
     }
 }
@@ -220,7 +224,7 @@ mod tests {
     use proptest::prelude::*;
 
     fn arb_scene_key() -> impl Strategy<Value = SceneKey> {
-        any::<[u8; 16]>().prop_map(|bytes| SceneKey(Uuid::from_bytes(bytes)))
+        any::<[u8; 16]>().prop_map(|bytes| SceneKey { id: bytes.to_vec() })
     }
 
     fn arb_property_value() -> impl Strategy<Value = PropertyValue> {
@@ -228,8 +232,8 @@ mod tests {
             any::<String>().prop_map(|value| PropertyValue::String { value }),
             any::<f64>().prop_map(|value| PropertyValue::Number { value }),
             any::<bool>().prop_map(|value| PropertyValue::Boolean { value }),
-            any::<[f32; 4]>().prop_map(|values| PropertyValue::Color { values }),
-            any::<[f32; 2]>().prop_map(|values| PropertyValue::Vec2 { values }),
+            prop::collection::vec(any::<f32>(), 4).prop_map(|values| PropertyValue::Color { values }),
+            prop::collection::vec(any::<f32>(), 2).prop_map(|values| PropertyValue::Vec2 { values }),
         ]
     }
 
@@ -289,7 +293,7 @@ mod tests {
             let mut a_prime = a.clone();
             // Mutate some properties
             fn mutate_props(node: &mut SceneNode) {
-                node.properties.0.insert("test".to_string(), PropertyValue::Boolean { value: true });
+                node.properties.properties.insert("test".to_string(), PropertyValue::Boolean { value: true });
                 for child in &mut node.children {
                     mutate_props(child);
                 }

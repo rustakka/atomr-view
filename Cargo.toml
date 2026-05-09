@@ -8,7 +8,7 @@ members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.3.3"
+version = "0.4.0"
 edition = "2021"
 authors = ["Matt Bragaw <mattbragaw@example.com>"]
 license = "Apache-2.0"
@@ -19,17 +19,18 @@ repository = "https://github.com/rustakka/atomr-view"
 # publish; `cargo xtask bump` keeps these in lockstep with
 # [workspace.package].version so the published artifact resolves
 # its siblings from crates.io.
-atomr-view-core = { path = "crates/atomr-view-core", version = "0.3.3" }
-atomr-view-backends = { path = "crates/atomr-view-backends", version = "0.3.3" }
+atomr-view-core = { path = "crates/atomr-view-core", version = "0.4.0" }
+atomr-view-backends = { path = "crates/atomr-view-backends", version = "0.4.0" }
 
 # External git-deps. `version` is required alongside `git` so
 # `cargo publish` can record a crates.io-resolvable requirement for
 # the published artifact while local builds keep using the git pin.
-# atomr-infer isn't published yet so it has no version pin; only
+# All three upstream crates ship to crates.io. Versions track the
+# atomr 0.6 / atomr-infer 0.7 "Python parity" release wave; only
 # atomr-core is actively consumed today.
-atomr-core = { git = "https://github.com/rustakka/atomr.git", version = "0.3" }
-atomr-persistence = { git = "https://github.com/rustakka/atomr.git", version = "0.3" }
-atomr-infer = { git = "https://github.com/rustakka/atomr.git" }
+atomr-core = { git = "https://github.com/rustakka/atomr.git", version = "0.6" }
+atomr-persistence = { git = "https://github.com/rustakka/atomr.git", version = "0.6" }
+atomr-infer = { git = "https://github.com/rustakka/atomr-infer.git", version = "0.7" }
 anyhow = "1.0"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"

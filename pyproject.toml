@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "atomr-view"
-version = "0.3.3"
+version = "0.4.0"
 description = "Backend-agnostic UI/visualisation system for atomr — actor-driven scenes across native, web, and mobile."
 readme = "README.md"
 requires-python = ">=3.10"

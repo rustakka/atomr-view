@@ -139,7 +139,10 @@ jobs:
     name: GitHub Release
     needs: [verify, build-wheels, build-sdist]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: |
+      startsWith(github.ref, 'refs/tags/v') &&
+      (github.event_name == 'push' ||
+       (github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run != 'true'))
     permissions:
       contents: write
     steps:
@@ -182,7 +185,11 @@ jobs:
     name: Publish to crates.io
     needs: [verify, github-release]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.event.inputs.skip_crates != 'true'
+    if: |
+      startsWith(github.ref, 'refs/tags/v') &&
+      github.event.inputs.skip_crates != 'true' &&
+      (github.event_name == 'push' ||
+       (github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run != 'true'))
     permissions:
       contents: read
     env:
@@ -255,7 +262,11 @@ jobs:
     name: Publish wheels + sdist to PyPI
     needs: [verify, build-wheels, build-sdist, github-release]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && github.event.inputs.skip_python != 'true'
+    if: |
+      startsWith(github.ref, 'refs/tags/v') &&
+      github.event.inputs.skip_python != 'true' &&
+      (github.event_name == 'push' ||
+       (github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run != 'true'))
     # Trusted publishing — configure on PyPI: pypi.org → manage project →
     # publishing → add GitHub publisher (owner / repo / workflow / env).
     environment:

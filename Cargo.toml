@@ -25,12 +25,12 @@ atomr-view-backends = { path = "crates/atomr-view-backends", version = "0.4.0" }
 # External git-deps. `version` is required alongside `git` so
 # `cargo publish` can record a crates.io-resolvable requirement for
 # the published artifact while local builds keep using the git pin.
-# All three upstream crates ship to crates.io. Versions track the
-# atomr 0.6 / atomr-infer 0.7 "Python parity" release wave; only
-# atomr-core is actively consumed today.
-atomr-core = { git = "https://github.com/rustakka/atomr.git", version = "0.6" }
-atomr-persistence = { git = "https://github.com/rustakka/atomr.git", version = "0.6" }
-atomr-infer = { git = "https://github.com/rustakka/atomr-infer.git", version = "0.7" }
+# All three upstream crates ship to crates.io. Versions track
+# atomr 0.9 / atomr-infer 0.8 as of 2026-05-11; only atomr-core is
+# actively consumed today.
+atomr-core = { git = "https://github.com/rustakka/atomr.git", version = "0.9" }
+atomr-persistence = { git = "https://github.com/rustakka/atomr.git", version = "0.9" }
+atomr-infer = { git = "https://github.com/rustakka/atomr-infer.git", version = "0.8" }
 anyhow = "1.0"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"

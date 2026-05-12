@@ -320,7 +320,7 @@ dependencies = [
 
 [[package]]
 name = "atomr-view-backends"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "async-trait",
  "atomr-view-core",
@@ -341,7 +341,7 @@ dependencies = [
 
 [[package]]
 name = "atomr-view-core"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "async-trait",
  "atomr-core",
@@ -358,7 +358,7 @@ dependencies = [
 
 [[package]]
 name = "atomr-view-python"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "atomr-view-backends",
  "atomr-view-core",
@@ -5270,7 +5270,7 @@ checksum = "3ae8337f8a065cfc972643663ea4279e04e7256de865aa66fe25cec5fb912d3f"
 
 [[package]]
 name = "xtask"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "anyhow",
 ]
